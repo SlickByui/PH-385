@@ -6,7 +6,53 @@
 ##################################################################
 
 #Import Libraries
+from cubic_grid import cubic_grid
+from over_relaxation_method import over_relaxation_method
+import numpy as np
+
+xlim=0.5
+ylim=0.5
+zlim=0.5
+delta=0.025
+nx=int(2.0*float(xlim)/float(delta))+1
+ny=int(2.0*float(ylim)/float(delta))+1
+nz=int(2.0*float(zlim)/float(delta))+1
+grid=cubic_grid(-xlim,xlim,-ylim,ylim,-zlim,zlim,delta)
+
+# Now enforce the boundary conditions
+
+# 1. BC of zero at edges of the grid
+for x in [x*delta-xlim for x in range (0,nx)]:
+    for y in [y*delta-ylim for y in range (0,ny)]:
+        grid.modify(x,y,-zlim,0.0,True,0.0)
+        grid.modify(x,y,zlim,0.0,True,0.0)
+
+for x in [x*delta-xlim for x in range (0,nx)]:
+    for z in [z*delta-zlim for z in range (0,nz)]:
+        grid.modify(x,-ylim,z,0.0,True,0.0)
+        grid.modify(x,ylim,z,0.0,True,0.0)
+
+for y in [y*delta-ylim for y in range (0,ny)]:
+    for z in [z*delta-zlim for z in range (0,nz)]:
+        grid.modify(-xlim,y,z,0.0,True,0.0)
+        grid.modify(xlim,y,z,0.0,True,0.0)
+
+# 2. Add grounded plate
+for x in [x*delta-xlim for x in range (0,nx)]:
+    for y in [y*delta-ylim for y in range (0,ny)]:
+        if np.sqrt(x*x+y*y)<=0.10:
+            grid.modify(x,y,0.0,0.0,True,0.25)
+
+# 3. Add the point charges
+grid.modify( 0.25, 0.00,0., 1.0e-6,False,0.0)
+grid.modify(-0.25, 0.00,0.,-1.0e-6,False,0.0)
+grid.modify( 0.00, 0.25,0., 1.0e-6,False,0.0)
+grid.modify( 0.00,-0.25,0.,-1.0e-6,False,0.0)
 
 
-def main():
-    return
+over_rerlax = over_relaxation_method(grid,1.8)
+over_rerlax.solve(1e-4)
+
+# Plot the potential on the x-y plane using our initial guess
+grid.plot_slice("xy",0)
+

@@ -1,9 +1,11 @@
-#############################################################################################
+###################################################################################
 # Over Relaxation Method Class
-#  - Given a grid construction, runs through the relaxation 
-#    method and normalises it (to a given threshold)
+#  - Given a grid construction, runs through the relaxation method and 
+#    normalises it (to a given threshold)
 #
-#############################################################################################
+# Author: Nick Ball               Contact: bal16004@byui.edu
+# Date: 2/18/25                   
+###################################################################################
 
 #Import Libraries
 import numpy as np

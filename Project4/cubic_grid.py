@@ -13,17 +13,23 @@ from matplotlib import pyplot as plt
 
 class cubic_grid:
     def __init__(self,xmin,xmax,ymin,ymax,zmin,zmax,delta):
-        #Initialize our array
+        #Initialize x, y, and z array points
         self.x = np.arange(xmin,xmax+delta,delta)
         self.y = np.arange(ymin,ymax+delta,delta)
         self.z = np.arange(zmin,zmax+delta,delta)
+
+        #Create our (empty) charge density values
         self.rho = np.zeros((self.x.size, self.y.size, self.z.size))
+
+        #Create a boolean array to track whether or not a point is fixed
         self.fixed = np.full((self.x.size, self.y.size, self.z.size),False)
+
+        #Create our voltage array
         self.V = np.zeros((self.x.size, self.y.size, self.z.size))
-        self.delta = delta
+        self.delta = delta  #spacing between our points
         return
     
-
+    #Function locates specific point and modifies its values
     def modify(self,x,y,z,rho,fixed:bool,V:float):
         #find closest points
         i = np.argmin(np.abs(self.x-x))

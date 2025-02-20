@@ -14,10 +14,10 @@ from over_relaxation_method import over_relaxation_method
 import numpy as np
 
 #Define the size of our grid and the spacing between the points
-xlim=0.5
-ylim=0.5
-zlim=0.5
-delta=0.025
+xlim=0.5       #cm
+ylim=0.5       #cm
+zlim=0.5       #cm
+delta=0.025    #also cm
 
 #Calculate the number of points per axis of the grid
 nx=int(2.0*float(xlim)/float(delta))+1
@@ -26,7 +26,6 @@ nz=int(2.0*float(zlim)/float(delta))+1
 
 #Create our grid object
 grid=cubic_grid(-xlim,xlim,-ylim,ylim,-zlim,zlim,delta)
-
 
 # Enforcing Boundary Conditions
 
@@ -60,7 +59,7 @@ grid.modify( 0.00,-0.25,0.,-1.0e-6,False,0.0)
 
 #Run grid through our over_relaxation_method
 over_rerlax = over_relaxation_method(grid,1.8)
-over_rerlax.solve(1e-4)
+over_rerlax.run(1e-4)
 
 #Plot the potential on the x-y plane using our initial guess
 grid.plot_slice("xy",0)

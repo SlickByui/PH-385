@@ -8,7 +8,6 @@
 ###################################################################################
 
 #Import Libs
-import numpy as np
 from basic_wave import basic_wave
 from wave import wave
 from _debug import debug
@@ -23,21 +22,24 @@ def main():
     wave_speed = 200
     t_max = 0.1
 
-    new_wave = wave(length,dx)
+    #Create new wave
+    new_wave = wave(length,dx,wave_speed,t_max)
+
+    #Set the endpoints to be fixed
+    new_wave.set_fixed_points(0)
+    new_wave.set_fixed_points(1)
 
     #Initialize our basic wave
-    b_wave = basic_wave(length,dx,wave_speed,t_max)
+    b_wave = basic_wave(new_wave)
 
     #Displace a random point
     b_wave.displace(0.3)
 
+    #Propogate our wave to populate array data
     b_wave.propogate()
 
-    #Propogate our wave to populate array data
-    #b_wave.propogate()
-
     #Plot it
-    b_wave.plot_wave()
+    b_wave.wave_animation()
 
     return
 

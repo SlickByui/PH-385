@@ -14,6 +14,7 @@ from realistic_wave import realistic_wave
 from base_string import string
 
 def basic_wave_demo():
+    """Runs basic wave algorithm for debugging"""
     #Define our init values
     length = 1.4      #m
     dx = 0.01         #m
@@ -72,6 +73,9 @@ def advanced_wave_demo():
 
     #Plot Average fourier 
     adv_string.plot_average_fourier()
+
+    #Save Fourier Graph
+    adv_string.save_average_fourier("data.csv")
 
     #Plot wave animation
     #adv_wave.wave_animation()

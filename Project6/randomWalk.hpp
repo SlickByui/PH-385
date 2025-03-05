@@ -16,13 +16,8 @@ class Particle
     
     public:
         Particle();
-        void initialize();
-        double getXpos();
-        double getYpos();
-        double getZpos();  //consider making these const
-        void setXpos(double x);
-        void setYpos(double y);
-        void setZpos(double z);
+        double getPos(int IDX);
+        void setPos(int IDX, double val);
 };
 
 class RandomWalk
@@ -32,16 +27,19 @@ class RandomWalk
         double yMax;
         double zMax;
         double dr;
+        int numWalks;
+        int numParticles;
+        int R_IDX;
         std::ofstream file1;
         std::ofstream file2;
         string fileName;
-        vector<double> rSqrdVals;
+        double * rSqrdVals;
+        Particle * particles;
 
     public:
-        vector<Particle> particles; //does this generate anything or do we need initialize
-        RandomWalk(double xMax, double yMax, double zMax, string fileName, int numParticles);
+        RandomWalk(double xMax, double yMax, double zMax, string fileName, int numParticles, int numWalks);
         void walk();
-        void run(int numWalks);
+        void run();
         void writeData();
         void clearFile(string filename);
         void calcRSqrd();

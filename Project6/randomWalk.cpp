@@ -7,40 +7,20 @@ Particle::Particle() {
     position[2] = 0;
 }
 
-double Particle::getXpos() {
-    return position[0];
-}
-
-double Particle::getYpos() {
-    return position[1];
-}
-
-double Particle::getZpos() {
-    return position[2];
-}
-
-void Particle::setXpos(double x) {
-    position[0] = x;
-}
-
-void Particle::setYpos(double y) {
-    position[1] = y;
-}
-
-void Particle::setZpos(double z) {
-    position[2] = z;
-}
-
+//Getters and setters for our 
+double Particle::getPos(int IDX) {return position[IDX];}
+void Particle::setPos(int IDX, double val) {position[IDX] = val;}
 
 //RandomWalk class
-RandomWalk::RandomWalk(double xMax, double yMax, double zMax, string fileName, int numParticles)
-                :xMax(xMax), yMax(yMax), zMax(zMax), fileName(fileName) 
+RandomWalk::RandomWalk(double xMax, double yMax, double zMax, string fileName, int numParticles, int numWalks)
+                :xMax(xMax), yMax(yMax), zMax(zMax), fileName(fileName), numParticles(numParticles),numWalks(numWalks) 
 {
-    //Initialize static 
+    //Initialize static step size
     dr = 0.025;
 
     //Set our vector size to match the number of particles we have
-    particles.resize(numParticles);  //see if better way (there is)
+    rSqrdVals = new double[numWalks];
+    particles = new Particle[numParticles];
 
     //Initialize random functionality
     srand (static_cast <unsigned> (time(0)));  //only call this once to seed the random generator
@@ -58,57 +38,58 @@ void RandomWalk::walk()
 {
     //Run through each element of our array and choose a random direction
     // to walk it through
-    for (Particle & particle : particles)
+    for (int i = 0; i < numParticles; i++)
     {
         //Choose random angle and save it
         double burn = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX/(2.0*M_PI)));  //need this to make the random work
         double theta = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX/(2.0*M_PI)));
         double phi = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX/M_PI));
+        dr = static_cast <double> (rand()) / (static_cast <double> (RAND_MAX/0.025));   //sloppy, but should work
 
         //Step the particle forward for x, y, and z
         //For x dir
         double dx = dr * cos(theta)*sin(phi);
-        double xNew = particle.getXpos() + dx;
+        double xNew = particles[i].getPos(0) + dx;
         if (xNew > xMax)
         {
-            xNew = xNew  -2*(xNew - xMax);  //calc these separately then apply?
+            xNew += (xMax - xNew);  //calc these separately then apply?
         }
         else if (xNew <= -xMax)
         {
-            xNew = xNew -2*(xMax-xNew);  //double check this logic
+            xNew += (-xMax-xNew);  //double check this logic
         }
-        particle.setXpos(xNew);
+        particles[i].setPos(0,xNew);
 
         //For y dir
-        double dy = dr * sin(theta)*sin(phi);
-        double yNew = particle.getYpos() + dy;
+        double dy = dr*sin(theta)*sin(phi);
+        double yNew = particles[i].getPos(1) + dy;
         if (yNew > yMax)
         {
-            yNew = yNew -2*(yNew-yMax);
+            yNew += (yMax - yNew);
         }
         else if (yNew < -yMax)
         {
-            yNew = yNew + 2*(yMax - yNew);
+            yNew += (-yMax - yNew);
         }
-        particle.setYpos(yNew);
+        particles[i].setPos(1,yNew);
 
         //For z dir
         double dz = dr * cos(phi);
-        double zNew = particle.getZpos() + dz;
+        double zNew = particles[i].getPos(2) + dz;
         if (zNew > zMax)
         {
-            zNew = zNew - 2*(zNew - zMax);
+            zNew += (zMax - zNew);
         }
         else if (zNew < -zMax)
         {
-            zNew = particle.getZpos() +2*(zMax - zNew);
+            zNew += (-zMax - zNew);
         }
-        particle.setZpos(zNew);
+        particles[i].setPos(2,zNew);
     }
 }
 
 //Function runs through a specified number of walks 
-void RandomWalk::run(int numWalks) 
+void RandomWalk::run() 
 {
     //Write initial cond to file
     writeData();
@@ -128,15 +109,16 @@ void RandomWalk::run(int numWalks)
 //Writes our data to a file
 void RandomWalk::writeData()
 {
-    for (Particle & particle: particles) //does this pull from existing list or make new one
+    for (int i = 0; i < numParticles; i++)
     {
-        file1 << particle.getXpos() << "    " << particle.getYpos() << "    " << particle.getZpos() << endl;
+        file1 << particles[i].getPos(0) << "    " << particles[i].getPos(1) << "    " << particles[i].getPos(2) << endl;
     }
     //Add two extra endlines to the file
     file1 << endl << endl;
     return;
 }
 
+//Clears the file
 void RandomWalk::clearFile(string filename)
 {
     std::ofstream file(filename, std::ofstream::out | std::ofstream::trunc);
@@ -149,36 +131,34 @@ void RandomWalk::clearFile(string filename)
         file.close();
 }
 
-void RandomWalk::calcRSqrd()  //Run every instance or run at end of cycle?
+//Calculates our rSqrd value at the specific step
+void RandomWalk::calcRSqrd()
 {
     //Initialize our rSqrd value
     double rSqrd = 0;
-    int N = particles.size();   //num particles
-    double ri = 0;
-    double rj = 0;
 
     //Loop through and calc r squared
-    for (int i = 0; i < N; i++)
+    for (int i = 0; i < numParticles; i++)
     {
-        for (int j = i; j < N; j++)
+        for (int j = i+1; j < numParticles; j++)
         {
-            //Maybe find way to simplify math?
-            ri = sqrt(particles[i].getXpos()*particles[i].getXpos() + particles[i].getYpos()*particles[i].getYpos() 
-                        + particles[i].getZpos()*particles[i].getZpos());
-            rj = sqrt(particles[j].getXpos()*particles[j].getXpos() + particles[j].getYpos()*particles[j].getYpos() 
-                        + particles[j].getZpos()*particles[j].getZpos());
-            rSqrd += pow(ri-rj,2);  //square our r vals
+            for (int k = 0; k < 3; k++)   //need to fix this to work with N dim
+            {
+                rSqrd += (particles[i].getPos(k) - particles[j].getPos(k))*(particles[i].getPos(k) - particles[j].getPos(k));
+            }
         }
     }
-    rSqrdVals.push_back(rSqrd/N);  //FIX ME
+    rSqrdVals[R_IDX] = rSqrd/numParticles;
+    R_IDX++;
 }
 
+//Writes RSqrd data to a file
 void RandomWalk::writeRData()
 {
     int iter = 1;
-    for (double & rSqrd: rSqrdVals) //does this pull from existing list or make new one
+    for (int i = 0; i < numWalks; i++)
     {
-        file2 << iter << " " << rSqrd << endl;
+        file2 << iter << " " << rSqrdVals[i] << endl;
         iter++;
     }
     return;
@@ -187,6 +167,11 @@ void RandomWalk::writeRData()
 //Deconstructor
 RandomWalk::~RandomWalk()
 {
+    //Close our files
     file1.close();
     file2.close();
+
+    //Delete our arrays
+    delete[] rSqrdVals;
+    delete[] particles;
 }

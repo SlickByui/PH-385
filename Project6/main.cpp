@@ -3,7 +3,18 @@ using namespace std;
 
 int main()
 {
-    string fileName = "data.csv";
-    RandomWalk randomWalk = RandomWalk(0.5,0.5,0.5,fileName,2500);
-    randomWalk.run(1000);
+    //Define our intial conditions
+    double xMax = 0.5;
+    double yMax = 0.5;
+    double zMax = 0.5;
+    int numParticles = 2500;
+    int numWalks = 1000;
+
+    string fileName = "data.csv";  //fileName for our large data file
+
+    //Initialize our random walk object
+    RandomWalk randomWalk = RandomWalk(xMax,yMax,zMax,fileName,numParticles,numWalks);
+
+    //Run our randomwalk
+    randomWalk.run();
 }

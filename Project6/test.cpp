@@ -19,7 +19,7 @@ int main()
 
     float phi;
     float theta;
-    float sumit = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/M_PI));  //if runs, following work
+    //float sumit = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/M_PI));  //if runs, following work
     phi = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/M_PI));
     theta = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(2*M_PI)));
 

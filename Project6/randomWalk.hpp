@@ -32,11 +32,9 @@ class RandomWalk
         double yMax;
         double zMax;
         double dr;
+        std::ofstream file1;
+        std::ofstream file2;
         string fileName;
-        double LO = 0.0;  //not sure if needed
-        double HI = 2*M_PI;
-        default_random_engine generator;
-        uniform_real_distribution<double> dist(double,double);
         vector<double> rSqrdVals;
 
     public:
@@ -48,4 +46,5 @@ class RandomWalk
         void clearFile(string filename);
         void calcRSqrd();
         void writeRData();
+        ~RandomWalk();
 };

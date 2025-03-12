@@ -1,6 +1,17 @@
 #include "icingLattice.hpp"
 #include <fstream>
 
+////////////////////////////////////////////////////////////////////////////
+// Main Method
+//  - Instantiates and runs the icingLattice object and methods as well
+//    as writes to and clears a file.
+// 
+// Author: Nick Ball              Contact: nbal16004@byui.edu
+// Date: 03/10/25                 Git: https://github.com/SlickByui/PH-385
+////////////////////////////////////////////////////////////////////////////
+
+
+//Clears our file before we use it
 void clearFile(std::string filename) {
     std::ofstream file(filename, std::ofstream::out | std::ofstream::trunc);
         if (file.is_open()) {

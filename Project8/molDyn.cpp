@@ -4,12 +4,14 @@
 #include <ctime>
 #include "molDyn.hpp"
 
+//Constructor for particle class
 particle::particle()
 {
     //Default start at 0,0 in x,y
     mass = 1; //CHANGE THIS
 }
 
+//Deconstructor for particle class
 particle::~particle()
 {
     //Delete our arrays
@@ -18,6 +20,7 @@ particle::~particle()
     delete[] vel;
 }
 
+//Particle initializer method
 void particle::initialize(int Ndim)
 {
     //Create our dynamic arrays based on number of dimensions
@@ -56,9 +59,6 @@ void molDyn::initializeSim(double dr, double dt, double v0, std::string filename
 
     //Rounds our number of molecules to nearest int
     int NmolRounded = std::round(std::sqrt(Nmol));
-
-    //Initialize our particles
-    //particles->initialize(Ndim);
 
     //Clear our file
     clearFile(filename);
@@ -106,7 +106,6 @@ void molDyn::initializeSim(double dr, double dt, double v0, std::string filename
 //Write our particle positions to the file
 void molDyn::writePos()
 {
-    std::cout << "Writing to file" << std::endl;
     //Only works for 2dim for now
     for (int i = 0; i < Nmol; i++)
     {

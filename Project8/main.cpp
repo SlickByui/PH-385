@@ -1,4 +1,5 @@
 #include "molDyn.hpp"
+#include <iostream>
 
 int main()
 {
@@ -11,4 +12,6 @@ int main()
 
     molDyn * mol = new molDyn(nmol,2,dims,rcutfactor);
     mol->initializeSim(dr,dt,v0,"data.csv");
+    double temp = mol->currentTemp();
+    std::cout << temp << std::endl;
 }

@@ -24,6 +24,7 @@ class particle
         void setOldPos(int IDX,double val);
         double getVelocity(int IDX);
         void setVelocity(int IDX, double val);
+        double getMass(void);
 };
 
 class molDyn
@@ -41,22 +42,24 @@ class molDyn
         double dt;
         double v0;
         particle * particles;   //list of particles
-        double *** F;           // Force list w/ [i][j] corresponding to particles i and j
+        double *** F;           // Force list w/ [i][j][comp] corresponding to particles i and j
         std::fstream file;
 
     //Methods
     private:
+        void initForceArray(void);
+        void resetForceArray(void);
         void writePos(void);
         double randDouble(double, double);
         void clearFile(std::string filename);
-        //double currentTemp(void);
-        //void updateForce(void);
+        void updateForce(void);
         //void updatePos();
 
     public:
         molDyn(int Nmol, int Ndim, double * dims, double rCutFact);
         ~molDyn(void);
         void initializeSim(double dr, double dt, double v0, std::string filename);
+        double currentTemp(void);
         //void addEnergy(double E, int numSteps);
         //double measureTemp(int numSteps);
         //void evolve(int numSteps);
